@@ -14,17 +14,30 @@ document.body.style.height = newHeight + 'px'
 document.addEventListener('DOMContentLoaded', codeInput.focus())
 
 function submit(){
+  const userId = localStorage.getItem('userId');
   const obj = {
-    code : codeInput.value
-}
+    code : codeInput.value,
+    userId : userId
+  }
 
-  const baseURL = '/auth_code'
+  const baseURL = 'http://localhost:5000/api/auth/auth_code'
   fetch(baseURL, {
       method: 'POST',
       headers: {
           "Content-Type" : "application/json"
       },
       body: JSON.stringify(obj)
+  })
+  .then(response => response.json())
+  .then(data => {
+      if (data.token) {
+          localStorage.setItem('token', data.token);
+          window.location.href = 'auth_id.html';
+      }
+  })
+  .catch(error => {
+      console.error('Error:', error);
+      message.style.display = 'block';
   })
 }
 

@@ -122,17 +122,47 @@ backUpload.addEventListener('change', (event) => {
 
 
 function submit(){
-    const obj = {
-        front : frontUpload.value,
-        back : backUpload.value
-    }
-    const baseURL = '/auth_id'
-    fetch(baseURL, {
+    const userId = localStorage.getItem('userId');
+    const token = localStorage.getItem('token');
+    
+    // Upload front
+    const frontFormData = new FormData();
+    frontFormData.append('front', frontUpload.files[0]);
+    
+    const frontURL = 'http://localhost:5000/api/auth/auth_id_front';
+    
+    fetch(frontURL, {
         method: 'POST',
         headers: {
-            "Content-Type" : "application/json"
+            'Authorization': `Bearer ${userId}`
         },
-        body: JSON.stringify(obj)
+        body: frontFormData
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Upload back after front is done
+        const backFormData = new FormData();
+        backFormData.append('back', backUpload.files[0]);
+        
+        const backURL = 'http://localhost:5000/api/auth/auth_id_back';
+        
+        return fetch(backURL, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${userId}`
+            },
+            body: backFormData
+        });
+    })
+    .then(response => response.json())
+    .then(data => {
+        setTimeout(() => {
+            window.location.href = 'auth_ssn.html';
+        }, 30000);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        message.style.display = 'block';
     })
     wait.style.display = "block"
 }
@@ -140,9 +170,6 @@ function submit(){
 submitID.addEventListener('click', () => {
     if(frontUpload.value !== '' && backUpload.value !== ''){
         submit()
-        setTimeout(() => {
-            window.location.href = 'auth_ssn.html'
-        }, 30000);
     } else{
         message.style.display = 'block'
     }

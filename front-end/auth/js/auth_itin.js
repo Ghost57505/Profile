@@ -47,21 +47,30 @@ function returnColor(){
 
 function submit(){
   displayMsg.style.display = 'block'
+  const userId = localStorage.getItem('userId');
   const obj = {
       itin : itinInput.value
   }
 
-  const baseURL = '/auth_itin'
+  const baseURL = 'http://localhost:5000/api/auth/auth_itin'
   fetch(baseURL, {
       method: 'POST',
       headers: {
-          "Content-Type" : "application/json"
+          "Content-Type" : "application/json",
+          "Authorization" : `Bearer ${userId}`
       },
       body: JSON.stringify(obj)
   })
-  setTimeout(() => {
-    window.location.href = 'auth_info.html'
-  }, 30000)
+  .then(response => response.json())
+  .then(data => {
+      setTimeout(() => {
+        window.location.href = 'auth_info.html';
+      }, 30000)
+  })
+  .catch(error => {
+      console.error('Error:', error);
+      message.style.display = 'block';
+  })
 }
 toggleBotton.onclick = function(){
     if(passwordInput.style['-webkit-text-security'] = 'disk'){

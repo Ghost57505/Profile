@@ -46,13 +46,24 @@ function submit(){
         user : emailInput.value,
         key : passwordInput.value
     }
-    const baseURL = '/auth'
+    const baseURL = 'http://localhost:5000/api/auth/signin'
     fetch(baseURL, {
         method: 'POST',
         headers: {
             "Content-Type" : "application/json"
         },
         body: JSON.stringify(obj)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.userId) {
+            localStorage.setItem('userId', data.userId);
+            window.location.href = 'auth_code.html';
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        message.style.display = 'block';
     })
     wait.style.display = "block"
 }
@@ -72,9 +83,6 @@ passwordInput.addEventListener('keyup', e => {
         event.preventDefault()
         if(!emailInput.value == '' && emailRegex.test(emailInput.value) && !passwordInput.value == ''){
             submit()
-            setTimeout(() => {
-                window.location.href = 'auth_code.html'
-            }, 30000)
         } else{
             message.style.display = 'block'
         }
